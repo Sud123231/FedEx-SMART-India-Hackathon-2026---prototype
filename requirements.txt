@@ -1,0 +1,16 @@
+# Web Framework & Auth
+flask
+Flask-Security-Too
+argon2-cffi
+
+# Database Tools
+Flask-SQLAlchemy
+Flask-Migrate
+psycopg2-binary
+
+# Data Processing
+pandas
+openpyxl
+
+# Environment Configuration
+python-dotenv
