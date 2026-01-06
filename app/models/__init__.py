@@ -1,2 +1,3 @@
-from .user import db, User, Role
-from .debt import DebtCase
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()

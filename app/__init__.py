@@ -1,9 +1,9 @@
 import os
 import pandas as pd
+from app.models import db
 from flask import Flask, render_template, request, redirect, url_for, flash
 from config import Config
-from app.models.user import db, User, Role  # Import everything needed for setup
-from app.models.debt import DebtCase
+from app.models.all_models import Role, User,DebtCase,AIModelPrediction,AuditLog,CaseActivityLog,CaseAssignment,CaseClosure,CaseEscalation,DCAPerformanceMetric,Organization,SLADefinition,CaseSLATracking # Import everything needed for setup
 from flask_security import Security, SQLAlchemyUserDatastore, login_required, roles_accepted, user_registered, current_user
 from flask_migrate import Migrate
 from dotenv import load_dotenv
