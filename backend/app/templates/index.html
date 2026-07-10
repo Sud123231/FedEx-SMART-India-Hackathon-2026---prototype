@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 border">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">DCA Management System</h1>
+        <p class="col-md-8 fs-4">
+            Streamlining debt collection and agency management for FedEx. 
+            Securely track, manage, and settle accounts with real-time data analytics.
+        </p>
+        
+        {% if not session.get("user_id") %}
+            <a href="/login" class="btn btn-fedex btn-lg">Login to Portal</a>
+        {% else %}
+            <a href="/dashboard" class="btn btn-fedex btn-lg">Go to Dashboard</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row align-items-md-stretch">
+    <div class="col-md-6">
+        <div class="h-100 p-5 text-white bg-dark rounded-3">
+            <h2>Data Integration</h2>
+            <p>Upload Excel sheets directly from FedEx sources to automatically update agent workloads and collection targets.</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="h-100 p-5 bg-light border rounded-3">
+            <h2>Secure Reporting</h2>
+            <p>Encrypted data handling ensures all financial records and user information are protected by enterprise-grade security.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

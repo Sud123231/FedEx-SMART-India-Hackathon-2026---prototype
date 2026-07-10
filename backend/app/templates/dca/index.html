@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCA Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- <div class="max-w-6xl mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-300"> -->
+        <!-- Header -->
+        <div class="flex justify-between items-center px-6 py-4 border-b border-gray-300">
+            <h1 class="text-2xl font-bold text-gray-800">DCA Portal</h1>
+            <div class="flex space-x-4">
+                <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+                <button class="text-gray-500 hover:text-gray-700"><i class="fas fa-bars text-xl"></i></button>
+            </div>
+        </div>
+
+        <!-- Subheader -->
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-700">DCA Portal (For DCAs)</h2>
+        </div>
+
+        <!-- Main Content -->
+        <div class="p-6">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+                    <p>{{ message }}</p>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('handle_action') }}" method="POST">
+                <div class="bg-gray-50 border border-gray-300 rounded-md">
+                    <div class="bg-gray-200 px-4 py-2 border-b border-gray-300">
+                        <h3 class="font-bold text-gray-700">My Assigned Cases</h3>
+                    </div>
+                    
+                    <!-- Filters -->
+                    <div class="p-4 flex items-center space-x-4 border-b border-gray-200">
+                        <span class="font-semibold text-gray-600">Filter:</span>
+                        <div class="relative">
+                            <select name="priority" onchange="window.location.href='/?priority='+this.value" class="appearance-none bg-white border border-gray-300 rounded px-4 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>Priority</option>
+                                <option value="High" {% if request.args.get('priority') == 'High' %}selected{% endif %}>High</option>
+                                <option value="Medium" {% if request.args.get('priority') == 'Medium' %}selected{% endif %}>Medium</option>
+                                <option value="Low" {% if request.args.get('priority') == 'Low' %}selected{% endif %}>Low</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <select name="status" onchange="window.location.href='/?status='+this.value" class="appearance-none bg-white border border-gray-300 rounded px-4 py-1 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>Status</option>
+                                <option value="Pending" {% if request.args.get('status') == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Paid" {% if request.args.get('status') == 'Paid' %}selected{% endif %}>Paid</option>
+                                <option value="Escalate" {% if request.args.get('status') == 'Escalate' %}selected{% endif %}>Escalate</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-300">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-3 text-left border-r border-gray-300">Select</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider border-r border-gray-300">Case ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider border-r border-gray-300">Customer</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider border-r border-gray-300">Amount</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider border-r border-gray-300">Aging</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider border-r border-gray-300">Priority</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                {% for case in cases %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-4 whitespace-nowrap text-center border-r border-gray-200">
+                                        <input type="radio" name="selected_case" value="{{ case.id }}" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">{{ case.case_id }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">{{ case.customer }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">${{ "{:,.2f}".format(case.amount) }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">{{ case.aging }} Days</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            {% if case.priority == 'High' %}bg-red-100 text-red-800{% elif case.priority == 'Medium' %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}">
+                                            {{ case.priority }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 flex justify-between items-center">
+                                        <span>{{ case.status }}</span>
+                                        <i class="fas fa-caret-down text-gray-500"></i>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="p-6 flex justify-center space-x-6 border-t border-gray-300">
+                        <button type="submit" name="action" value="update_status" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 border border-gray-400 rounded shadow">
+                            Update Status
+                        </button>
+                        <button type="submit" name="action" value="add_note" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 border border-gray-400 rounded shadow">
+                            Add Notes
+                        </button>
+                        <button type="submit" name="action" value="request_escalation" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 border border-gray-400 rounded shadow">
+                            Request Escalation
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    <!-- </div> -->
+
+    <!-- Footer Info
+    <div class="max-w-6xl mx-auto mt-8 flex justify-between items-start opacity-75">
+        <div class="flex items-center space-x-4">
+            <div class="p-2 bg-gray-200 rounded-full">
+                <i class="fas fa-lock text-gray-600"></i>
+            </div>
+            <div>
+                <p class="text-sm font-bold">No Overlap</p>
+                <p class="text-xs text-gray-500">Restricted Access Enforced</p>
+            </div>
+        </div>
+        <div class="flex flex-col items-center">
+            <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-2">
+                <i class="fas fa-headset text-4xl text-gray-500"></i>
+            </div>
+            <p class="font-bold text-sm">DCA User</p>
+            <p class="text-xs text-gray-500">Collection Agency</p>
+        </div>
+    </div>
+    
+    <div class="max-w-md mx-auto mt-4 bg-blue-600 text-white p-3 rounded-md flex items-center justify-center space-x-3 shadow-lg">
+        <i class="fas fa-lock"></i>
+        <span class="font-semibold">Cannot Access Enterprise Dashboard</span>
+    </div> -->
+</body>
+</html>
